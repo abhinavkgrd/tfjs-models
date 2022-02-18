@@ -59,10 +59,10 @@ export interface ModelConfig {
 }
 
 export async function load(config: ModelConfig = {}) {
-    if (tf == null) {
+    if (tf === null) {
         throw new Error(
             `Cannot find TensorFlow.js. If you are using a <script> tag, please ` +
-                `also include @tensorflow/tfjs on the page before using this model.`,
+                `also include @tensorflow/tfjs on the page before using this model.`
         );
     }
     const base = config.base || 'lite_mobilenet_v2';
@@ -75,7 +75,7 @@ export async function load(config: ModelConfig = {}) {
         throw new Error(
             `ObjectDetection constructed with invalid base model ` +
                 `${base}. Valid names are 'mobilenet_v1',` +
-                ` 'mobilenet_v2' and 'lite_mobilenet_v2'.`,
+                ` 'mobilenet_v2' and 'lite_mobilenet_v2'.`
         );
     }
 
@@ -83,7 +83,7 @@ export async function load(config: ModelConfig = {}) {
         throw new Error(
             `ObjectDetection constructed with invalid dataset ` +
                 `${dataset}. Valid names are 'coco',` +
-                ` 'open-images'`,
+                ` 'open-images'`
         );
     }
 
@@ -91,7 +91,7 @@ export async function load(config: ModelConfig = {}) {
         throw new Error(
             `ObjectDetection constructed with invalid dataset and base model combo ` +
                 `(${dataset}, ${base}) . open-images currently only support ` +
-                ` 'mobilenet_v2' base model`,
+                ` 'mobilenet_v2' base model`
         );
     }
 
@@ -99,7 +99,7 @@ export async function load(config: ModelConfig = {}) {
         throw new Error(
             `ObjectDetection constructed failed` +
                 `open_images dataset models require local model URL  ` +
-                `as they are not hosted`,
+                `as they are not hosted`
         );
     }
     const objectDetection = new ObjectDetection(base, dataset, modelUrl);
@@ -115,7 +115,7 @@ export class ObjectDetection {
     constructor(
         base: ObjectDetectionBaseModel,
         dataset: ObjectDetectionTrainingDataset,
-        modelUrl?: string,
+        modelUrl?: string
     ) {
         this.modelPath =
             modelUrl || `${BASE_PATH}${this.getPrefix(base)}/model.json`;
@@ -133,7 +133,7 @@ export class ObjectDetection {
         const zeroTensor = tf.zeros([1, 300, 300, 3], 'int32');
         // Warmup the model.
         const result = (await this.model.executeAsync(
-            zeroTensor,
+            zeroTensor
         )) as tf.Tensor[];
         await Promise.all(result.map((t) => t.data()));
         result.map((t) => t.dispose());
@@ -159,7 +159,7 @@ export class ObjectDetection {
             | HTMLCanvasElement
             | HTMLVideoElement,
         maxNumBoxes: number,
-        minScore: number,
+        minScore: number
     ): Promise<DetectedObject[]> {
         const batched = tf.tidy(() => {
             if (!(img instanceof tf.Tensor)) {
@@ -188,7 +188,7 @@ export class ObjectDetection {
         const [maxScores, classes] = this.calculateMaxScores(
             scores,
             result[0].shape[1],
-            result[0].shape[2],
+            result[0].shape[2]
         );
 
         const prevBackend = tf.getBackend();
@@ -206,7 +206,7 @@ export class ObjectDetection {
                 maxScores,
                 maxNumBoxes,
                 minScore,
-                minScore,
+                minScore
             );
         });
 
@@ -224,7 +224,7 @@ export class ObjectDetection {
             boxes,
             maxScores,
             indexes,
-            classes,
+            classes
         );
     }
 
@@ -234,7 +234,7 @@ export class ObjectDetection {
         boxes: Float32Array,
         scores: number[],
         indexes: Float32Array,
-        classes: number[],
+        classes: number[]
     ): DetectedObject[] {
         const count = indexes.length;
         const objects: DetectedObject[] = [];
@@ -264,7 +264,7 @@ export class ObjectDetection {
     private calculateMaxScores(
         scores: Float32Array,
         numBoxes: number,
-        numClasses: number,
+        numClasses: number
     ): [number[], number[]] {
         const maxes = [];
         const classes = [];
@@ -303,7 +303,7 @@ export class ObjectDetection {
             | HTMLCanvasElement
             | HTMLVideoElement,
         maxNumBoxes = 20,
-        minScore = 0.5,
+        minScore = 0.5
     ): Promise<DetectedObject[]> {
         return this.infer(img, maxNumBoxes, minScore);
     }
@@ -313,7 +313,7 @@ export class ObjectDetection {
      * are done with the model.
      */
     dispose() {
-        if (this.model != null) {
+        if (this.model !== null) {
             this.model.dispose();
         }
     }
