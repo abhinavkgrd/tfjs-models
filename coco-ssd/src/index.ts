@@ -157,7 +157,8 @@ export class ObjectDetection {
             | ImageData
             | HTMLImageElement
             | HTMLCanvasElement
-            | HTMLVideoElement,
+            | HTMLVideoElement
+            | ImageBitmap,
         maxNumBoxes: number,
         minScore: number
     ): Promise<DetectedObject[]> {
